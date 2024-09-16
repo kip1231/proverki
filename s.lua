@@ -1231,7 +1231,7 @@ local UICorner_7 = Instance.new("UICorner")
 
 local TemplateFrame = Instance.new("Frame")
 TemplateFrame.Name = "TemplateFrame"
-TemplateFrame.Size = UDim2.new(0, 500, 0, 55)
+TemplateFrame.Size = UDim2.new(1, 0, 0, 55)
 TemplateFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 
 local UICorner_2 = Instance.new("UICorner")
@@ -1239,7 +1239,7 @@ UICorner_2.Parent = TemplateFrame
 
 local TextLabel = Instance.new("TextLabel")
 TextLabel.Name = "TextLabel"
-TextLabel.Size = UDim2.new(0.4, 0, 0.909090936, 0)
+TextLabel.Size = UDim2.new(0.4, 0, 1, 0)
 TextLabel.Position = UDim2.new(0.02, 0, 0, 0)
 TextLabel.BackgroundTransparency = 1
 TextLabel.Text = "Script Name"
@@ -1250,8 +1250,8 @@ TextLabel.Parent = TemplateFrame
 
 local TextButton = Instance.new("TextButton")
 TextButton.Name = "TextButton"
-TextButton.Size = UDim2.new(0.15, 0, 0.727272749, 0)
-TextButton.Position = UDim2.new(0.46, 0, 0.129629627, 0)
+TextButton.Size = UDim2.new(0.2, 0, 0.7, 0)
+TextButton.Position = UDim2.new(0.4, 0, 0.15, 0)
 TextButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 TextButton.BorderSizePixel = 2
 TextButton.BorderColor3 = Color3.fromRGB(255, 255, 255)
@@ -1259,19 +1259,20 @@ TextButton.Text = "Delete"
 TextButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 TextButton.TextScaled = true
 TextButton.Parent = TemplateFrame
+
 local uiStroke7 = Instance.new("UIStroke") 
 uiStroke7.Thickness = 2
 uiStroke7.Color = Color3.fromRGB(255, 255, 255)
 uiStroke7.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-
 uiStroke7.Parent = TextButton
+
 local UICorner_3 = Instance.new("UICorner")
 UICorner_3.Parent = TextButton
 
 local TextButton_2 = Instance.new("TextButton")
 TextButton_2.Name = "TextButton_2"
-TextButton_2.Size = UDim2.new(0.25, 0, 0.727272749, 0) 
-TextButton_2.Position = UDim2.new(0.63, 0, 0.129629627, 0)
+TextButton_2.Size = UDim2.new(0.3, 0, 0.7, 0)
+TextButton_2.Position = UDim2.new(0.65, 0, 0.15, 0)
 TextButton_2.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 TextButton_2.BorderSizePixel = 2
 TextButton_2.BorderColor3 = Color3.fromRGB(255, 255, 255)
@@ -1279,14 +1280,16 @@ TextButton_2.Text = "Execute"
 TextButton_2.TextColor3 = Color3.fromRGB(255, 255, 255)
 TextButton_2.TextScaled = true
 TextButton_2.Parent = TemplateFrame
+
 local uiStroke6 = Instance.new("UIStroke") 
 uiStroke6.Thickness = 2
 uiStroke6.Color = Color3.fromRGB(255, 255, 255)
 uiStroke6.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-
 uiStroke6.Parent = TextButton_2
+
 local UICorner_4 = Instance.new("UICorner")
 UICorner_4.Parent = TextButton_2
+
 local function UpdateScriptList()
     for _, child in pairs(ScrollingFrameScripts:GetChildren()) do
         if child:IsA("Frame") and child ~= TemplateFrame then
@@ -1304,6 +1307,12 @@ local function UpdateScriptList()
         local scriptName = file:match("([^/]+)%.lua$")
 
         local newFrame = TemplateFrame:Clone()
+        newFrame.Size = UDim2.new(1, 0, 0, 55)
+        newFrame.TextLabel.Size = UDim2.new(0.4, 0, 1, 0)
+        newFrame.TextButton.Size = UDim2.new(0.2, 0, 0.7, 0)
+        newFrame.TextButton_2.Size = UDim2.new(0.3, 0, 0.7, 0)
+        newFrame.TextButton.Position = UDim2.new(0.4, 0, 0.15, 0)
+        newFrame.TextButton_2.Position = UDim2.new(0.65, 0, 0.15, 0)
         newFrame.TextLabel.Text = scriptName
         newFrame.Parent = ScrollingFrameScripts
 
@@ -1325,8 +1334,6 @@ local function UpdateScriptList()
         end)
     end
 end
-
-
 CreateButton.MouseButton1Click:Connect(function()
     local scriptName = TextBoxScriptName.Text
     local scriptContent = TextBoxScriptContent.Text
