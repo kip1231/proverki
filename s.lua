@@ -1379,6 +1379,7 @@ local function addMessage(text, isUser)
     messageLabel.TextColor3 = Color3.new(255, 255, 255)
     messageLabel.TextXAlignment = isUser and Enum.TextXAlignment.Right or Enum.TextXAlignment.Left
     messageLabel.TextWrapped = true
+	messageLabel.TextScaled = true
     MessageFrame.CanvasSize = UDim2.new(0, 0, 0, MessageFrame.UIListLayout.AbsoluteContentSize.Y)
     MessageFrame.CanvasPosition = Vector2.new(0, MessageFrame.UIListLayout.AbsoluteContentSize.Y)
 end
