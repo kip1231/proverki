@@ -330,10 +330,11 @@ editor.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 editor.BackgroundTransparency = 1.000
 editor.BorderColor3 = Color3.fromRGB(0, 0, 0)
 editor.BorderSizePixel = 0
-editor.Position = UDim2.new(0.0294869225, 0, -3.37465202e-08, 0)
+editor.Position = UDim2.new(0.0035, 0, -3.37465202e-08, 0)
 editor.Size = UDim2.new(0, 648, 0, 439)
 editor.Font = Enum.Font.Code
 editor.MultiLine = true
+editor.ClearTextOnFocus = false
 editor.Text = ""
 editor.TextColor3 = Color3.fromRGB(255, 255, 255)
 editor.TextSize = 14.000
@@ -548,7 +549,7 @@ fps.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 fps.BackgroundTransparency = 1.000
 fps.BorderColor3 = Color3.fromRGB(0, 0, 0)
 fps.BorderSizePixel = 0
-fps.Position = UDim2.new(0.0907161459, 0, 0.152020633, 0)
+fps.Position = UDim2.new(0.1507161459, 0, 0.152020633, 0)
 fps.Size = UDim2.new(0.302387148, 0, 0.691002905, 0)
 fps.Font = Enum.Font.SourceSans
 fps.Text = "Unlock fps"
@@ -1357,73 +1358,112 @@ sccreate.MouseButton1Click:Connect(function()
 fullsc.Visible = true
 scfcre.Visible = false
 end)
-
+local hwid = gethwid()
 local TextBox = aiprompt
 local SendButton = aisend
 local MessageFrame = aimes
+local HttpService = game:GetService("HttpService")  -- Для работы с кодировками
 
+-- Функция для декодирования текста из формата URL
+local function decodeFromURL(str)
+    return HttpService:UrlDecode(str)
+end
+
+-- Функция для добавления сообщения в окно чата
 local function addMessage(text, isUser)
-	local messageLabel = Instance.new("TextLabel")
-	messageLabel.Parent = MessageFrame
-	messageLabel.Text = text or "Error"
-	messageLabel.Size = UDim2.new(1, -10, 0, 50)
-	messageLabel.BackgroundColor3 = isUser and Color3.new(0.6, 0.8, 1) or Color3.new(1, 0.6, 0.6)
-	messageLabel.TextColor3 = Color3.new(0, 0, 0)
-	messageLabel.TextXAlignment = isUser and Enum.TextXAlignment.Right or Enum.TextXAlignment.Left
-	messageLabel.TextWrapped = true
-	MessageFrame.CanvasSize = UDim2.new(0, 0, 0, MessageFrame.UIListLayout.AbsoluteContentSize.Y)
-	MessageFrame.CanvasPosition = Vector2.new(0, MessageFrame.UIListLayout.AbsoluteContentSize.Y)
+    local messageLabel = Instance.new("TextLabel")
+    messageLabel.Parent = MessageFrame
+    messageLabel.Text = text or "Error"
+    messageLabel.Size = UDim2.new(1, -10, 0, 50)
+    messageLabel.BackgroundColor3 = Color3.fromRGB(27, 27, 27)
+    messageLabel.TextColor3 = Color3.new(255, 255, 255)
+    messageLabel.TextXAlignment = isUser and Enum.TextXAlignment.Right or Enum.TextXAlignment.Left
+    messageLabel.TextWrapped = true
+    MessageFrame.CanvasSize = UDim2.new(0, 0, 0, MessageFrame.UIListLayout.AbsoluteContentSize.Y)
+    MessageFrame.CanvasPosition = Vector2.new(0, MessageFrame.UIListLayout.AbsoluteContentSize.Y)
+end
+
+-- Функция для загрузки и декодирования истории сообщений
+local function loadHistory()
+    local success, response = pcall(function()
+        return game:HttpGet("http://181.215.58.8:1113/api/history/" .. hwid)
+    end)
+
+    if success then
+        -- Разделение по строкам
+        local messages = string.split(response, "\n")  -- Разделяем по новой строке
+        
+        for _, message in ipairs(messages) do
+            -- Определяем, кто отправитель сообщения (User или Assistant)
+            if string.find(message, "User:") then
+                local userMessage = string.gsub(message, "User:", "")  -- Убираем метку "User:"
+                userMessage = decodeFromURL(userMessage)  -- Декодируем текст
+                addMessage(userMessage, true)  -- Выводим сообщение пользователя
+            elseif string.find(message, "Assistant:") then
+                local assistantMessage = string.gsub(message, "Assistant:", "")  -- Убираем метку "Assistant:"
+                assistantMessage = decodeFromURL(assistantMessage)  -- Декодируем текст
+                addMessage(assistantMessage, false)  -- Выводим сообщение ассистента
+            end
+        end
+    else
+        addMessage("Не удалось загрузить историю.", false)
+    end
 end
 
 local isSendingMessage = false
 local function sendMessage()
-	if isSendingMessage then return end
-	isSendingMessage = true
+    if isSendingMessage then return end
+    isSendingMessage = true
 
-	local userMessage = TextBox.Text
-	if userMessage ~= "" then
-		addMessage(userMessage, true)
-		local maxAttempts = 3
-		local attempt = 0
-		local success, response
-		local finalErrorMessage = ""
+    local userMessage = TextBox.Text
+    if userMessage ~= "" then
+        addMessage(userMessage, true)
+        
+        -- Кодируем текст в формат URL перед отправкой
+        local encodedMessage = HttpService:UrlEncode(userMessage)
+        
+        local success, response = pcall(function()
+            return game:HttpGet("http://181.215.58.8:1113/api/chat?prompt=" .. encodedMessage .. "&hwid=" .. hwid)
+        end)
 
-			local response = game:HttpGet("http://181.215.58.8:1171/api/chat?prompt=" .. userMessage)
-			print(response)
-			addMessage(response, false)
-			finalErrorMessage = ""
-		if finalErrorMessage ~= "" then
-			addMessage(finalErrorMessage, false)
-		end
+        if success then
+            addMessage(response, false)
+        else
+            addMessage("Ошибка при отправке сообщения.", false)
+        end
 
-		TextBox.Text = ""
-	end
+        TextBox.Text = ""
+    end
 
-	wait(15)
-	isSendingMessage = false
+    wait(15)
+    isSendingMessage = false
 end
 
 SendButton.MouseButton1Click:Connect(sendMessage)
 TextBox.FocusLost:Connect(function(enterPressed)
-	if enterPressed then
-		sendMessage()
-	end
+    if enterPressed then
+        sendMessage()
+    end
 end)
 
 local uiListLayout = Instance.new("UIListLayout")
 uiListLayout.Parent = MessageFrame
+
+-- Вызов функции для загрузки истории при старте
+loadHistory()
+
+
+
+
+
 --тута здеся запрос
 local function fetchScripts(query)
     local response = request({
-        Url = "https://scriptblox.com/api/script/search?q=" .. query,  -- Пример URL
+        Url = "https://scriptblox.com/api/script/search?q=" .. query,
         Method = "GET",
     })
-    assert(type(response) == "table", "Response must be a table")
-    print(response.StatusCode)
-    assert(response.StatusCode == 200, "Did not return a 200 status code")
-    local data = game:GetService("HttpService"):JSONDecode(response.Body)
+    local data = HttpService:JSONDecode(response.Body)
 
-    -- Проверка, что data это таблица и содержит нужные поля
     if type(data) == "table" and type(data.result) == "table" and type(data.result.scripts) == "table" then
         return data
     else
@@ -1432,30 +1472,23 @@ local function fetchScripts(query)
     end
 end
 
+
+
 --тута здеся гуи 
 local function createScriptFrame(scriptData)
-	if scriptData.game.imageUrl and scriptData.game.imageUrl ~= "" then
-		local ull = "https://scriptblox.com" .. scriptData.game.imageUrl
-		local response = request({
-			Url = ull,
-			Method = "GET"
-		})
-		print(response.Body)
-		writefile(scriptData.title .. ".png", response.Body)
-	end
-task.wait()
 local poiscr = Instance.new("Frame")
+local UICorner_4 = Instance.new("UICorner")
 local poiname = Instance.new("TextLabel")
 local poicopy = Instance.new("TextButton")
-
+local UICorner_5 = Instance.new("UICorner")
 local poiexe = Instance.new("TextButton")
-
+local UICorner_6 = Instance.new("UICorner")
 local baner = Instance.new("ImageButton")
-
+local UICorner_7 = Instance.new("UICorner")
 local poiedi = Instance.new("TextButton")
-
+local UICorner_8 = Instance.new("UICorner")
 local poidel = Instance.new("TextButton")
-
+local UICorner_9 = Instance.new("UICorner")
 poiscr.Name = "poiscr"
 poiscr.Parent = pois
 poiscr.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
@@ -1463,8 +1496,8 @@ poiscr.BorderColor3 = Color3.fromRGB(0, 0, 0)
 poiscr.BorderSizePixel = 0
 poiscr.Position = UDim2.new(0, 0, -2.02326487e-06, 0)
 poiscr.Size = UDim2.new(0, 656, 0, 210)
-local UICorner_30 = Instance.new("UICorner")
-UICorner_30.Parent = poiscr
+
+UICorner_4.Parent = poiscr
 
 poiname.Name = "poiname"
 poiname.Parent = poiscr
@@ -1475,7 +1508,7 @@ poiname.BorderSizePixel = 0
 poiname.Position = UDim2.new(-0.0121952146, 0, 0.873761833, 0)
 poiname.Size = UDim2.new(0.202743903, 0, 0.119047619, 0)
 poiname.Font = Enum.Font.SourceSans
-poiname.Text = scriptData.title or "Script name"
+poiname.Text = scriptData. title or "Script name"
 poiname.TextColor3 = Color3.fromRGB(255, 255, 255)
 poiname.TextScaled = true
 poiname.TextSize = 14.000
@@ -1487,7 +1520,7 @@ poicopy.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 poicopy.BackgroundTransparency = 1.000
 poicopy.BorderColor3 = Color3.fromRGB(0, 0, 0)
 poicopy.BorderSizePixel = 0
-poicopy.Position = UDim2.new(0.736000061, 0, 0.188047573, 0)
+poicopy.Position = UDim2.new(0.4, 0, 0.188047573, 0)
 poicopy.Size = UDim2.new(0.259146333, 0, 0.147619054, 0)
 poicopy.Font = Enum.Font.SourceSans
 poicopy.Text = "Copy"
@@ -1495,8 +1528,13 @@ poicopy.TextColor3 = Color3.fromRGB(255, 255, 255)
 poicopy.TextScaled = true
 poicopy.TextSize = 14.000
 poicopy.TextWrapped = true
-local UICorner_31 = Instance.new("UICorner")
-UICorner_31.Parent = poicopy
+	local uiStroke = Instance.new("UIStroke") 
+	uiStroke.Thickness = 2
+	uiStroke.Color = Color3.fromRGB(255, 255, 255)
+	uiStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+
+	uiStroke.Parent = poicopy
+UICorner_5.Parent = poicopy
 
 poiexe.Name = "poiexe"
 poiexe.Parent = poiscr
@@ -1504,7 +1542,7 @@ poiexe.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 poiexe.BackgroundTransparency = 1.000
 poiexe.BorderColor3 = Color3.fromRGB(0, 0, 0)
 poiexe.BorderSizePixel = 0
-poiexe.Position = UDim2.new(0.736000061, 0, -0.00242861803, 0)
+poiexe.Position = UDim2.new(0.4, 0, -0.00242861803, 0)
 poiexe.Size = UDim2.new(0.259146333, 0, 0.147619054, 0)
 poiexe.Font = Enum.Font.SourceSans
 poiexe.Text = "Execute"
@@ -1512,8 +1550,13 @@ poiexe.TextColor3 = Color3.fromRGB(255, 255, 255)
 poiexe.TextScaled = true
 poiexe.TextSize = 14.000
 poiexe.TextWrapped = true
-local UICorner_32 = Instance.new("UICorner")
-UICorner_32.Parent = poiexe
+	local uiStroke = Instance.new("UIStroke") 
+	uiStroke.Thickness = 2
+	uiStroke.Color = Color3.fromRGB(255, 255, 255)
+	uiStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+
+	uiStroke.Parent = poiexe
+UICorner_6.Parent = poiexe
 
 baner.Name = "baner"
 baner.Parent = poiscr
@@ -1521,13 +1564,9 @@ baner.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 baner.BackgroundTransparency = 1.000
 baner.BorderColor3 = Color3.fromRGB(0, 0, 0)
 baner.BorderSizePixel = 0
-baner.Size = UDim2.new(0.725609779, 0, 0.86190474, 0)
-if isfile(scriptData.title .. ".png") then
-print("find")
-baner.Image = getcustomasset(scriptData.title .. ".png")
-end
-local UICorner_33 = Instance.new("UICorner")
-UICorner_33.Parent = baner
+baner.Size = UDim2.new(0.395609779, 0, 0.86190474, 0)
+baner.Image = "https://assetgame.roblox.com/Game/Tools/ThumbnailAsset.ashx?aid="..scriptData.game.gameId.."&fmt=png&wd=420&ht=420"
+UICorner_7.Parent = baner
 
 poiedi.Name = "poiedi"
 poiedi.Parent = poiscr
@@ -1535,18 +1574,21 @@ poiedi.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 poiedi.BackgroundTransparency = 1.000
 poiedi.BorderColor3 = Color3.fromRGB(0, 0, 0)
 poiedi.BorderSizePixel = 0
-poiedi.Position = UDim2.new(0.736000061, 0, 0.368999958, 0)
-poiedi.Size = UDim2.new(1.59146333, 0, 0.147619054, 0)
+poiedi.Position = UDim2.new(0.4, 0, 0.368999958, 0)
+poiedi.Size = UDim2.new(0.259146333, 0, 0.147619054, 0)
 poiedi.Font = Enum.Font.SourceSans
 poiedi.Text = "To editor"
 poiedi.TextColor3 = Color3.fromRGB(255, 255, 255)
 poiedi.TextScaled = true
 poiedi.TextSize = 14.000
 poiedi.TextWrapped = true
+	local uiStroke = Instance.new("UIStroke") 
+	uiStroke.Thickness = 2
+	uiStroke.Color = Color3.fromRGB(255, 255, 255)
+	uiStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 
-
-local UICorner_34 = Instance.new("UICorner")
-UICorner_34.Parent = poiedi
+	uiStroke.Parent = poiedi
+UICorner_8.Parent = poiedi
 
 poidel.Name = "poidel"
 poidel.Parent = poiscr
@@ -1554,7 +1596,7 @@ poidel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 poidel.BackgroundTransparency = 1.000
 poidel.BorderColor3 = Color3.fromRGB(0, 0, 0)
 poidel.BorderSizePixel = 0
-poidel.Position = UDim2.new(0.734756112, 0, 0.568801284, 0)
+poidel.Position = UDim2.new(0.4, 0, 0.568801284, 0)
 poidel.Size = UDim2.new(0.259146333, 0, 0.147619054, 0)
 poidel.Font = Enum.Font.SourceSans
 poidel.Text = "Delete"
@@ -1562,15 +1604,28 @@ poidel.TextColor3 = Color3.fromRGB(255, 255, 255)
 poidel.TextScaled = true
 poidel.TextSize = 14.000
 poidel.TextWrapped = true
-local UICorner_35 = Instance.new("UICorner")
-UICorner_35.Parent = poidel
+	local uiStroke = Instance.new("UIStroke") 
+	uiStroke.Thickness = 2
+	uiStroke.Color = Color3.fromRGB(255, 255, 255)
+	uiStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+
+	uiStroke.Parent = poidel
+UICorner_9.Parent = poidel
 
 	poicopy.MouseButton1Click:Connect(function()
 	setclipboard(scriptData.script)
 	end)
 
 	poiexe.MouseButton1Click:Connect(function()
-	loadstring(scriptData.script)()
+	local scriptString = scriptData.script
+		local success, errorMsg = pcall(function()
+			local scriptFunc = loadstring(scriptString)
+			local result = scriptFunc()
+		end)
+
+		if not success then
+			warn("Error" .. errorMsg)
+		end
 	end)
 	
 
@@ -1579,12 +1634,9 @@ UICorner_35.Parent = poidel
 	end)
 
 	poidel.MouseButton1Click:Connect(function()
-	scriptFrame:Destroy()
+	poiscr:Destroy()
 	end)
-poicopy.Position = UDim2.new(0.736000061, 0, 0.188047573, 0)
-poiexe.Position = UDim2.new(0.736000061, 0, -0.00242861803, 0)
-poiedi.Position = UDim2.new(0.736000061, 0, 0.368999958, 0)
-poidel.Position = UDim2.new(0.734756112, 0, 0.568801284, 0)
+
 
 end
 --тута здеся поиск
