@@ -1,19 +1,26 @@
 local KeyGuardLibrary = {}
 
--- Локальные переменные для хранения данных
-local publicToken = ""
-local privateToken = ""
-local trueData = ""
-local falseData = ""
+local TokenStorage = {}
 
--- Функция для установки данных
-function KeyGuardLibrary.Set(config)
-    publicToken = config.publicToken or ""
-    privateToken = config.privateToken or ""
-    trueData = config.trueData or ""
-    falseData = config.falseData or ""
+-- Функция для установки значений
+function KeyGuardLibrary.Set(data)
+    if data.publicToken and data.privateToken and data.trueData and data.falseData then
+        -- Сохраняем данные в хранилище
+        TokenStorage.publicToken = data.publicToken
+        TokenStorage.privateToken = data.privateToken
+        TokenStorage.trueData = data.trueData
+        TokenStorage.falseData = data.falseData
+
+        -- Сообщаем об успешной установке данных
+        print("Данные успешно сохранены:")
+        print("Публичный токен: " .. TokenStorage.publicToken)
+        print("Приватный токен: " .. TokenStorage.privateToken)
+        print("TrueData: " .. tostring(TokenStorage.trueData))
+        print("FalseData: " .. tostring(TokenStorage.falseData))
+    else
+        print("Ошибка: не все необходимые данные были переданы.")
+    end
 end
-
 -- Функция для получения ссылки с токеном (например, для активации)
 function KeyGuardLibrary.getLink()
     return "https://t.me/KrutoySuslik"
