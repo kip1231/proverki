@@ -28,7 +28,7 @@ end
 
 -- Функция для проверки ключа
 function KeyGuardLibrary.validateDefaultKey(inputKey)
-return trueData
+    return TokenStorage.trueData
 end
 
 return KeyGuardLibrary
