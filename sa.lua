@@ -26,7 +26,7 @@ function KeyGuardLibrary.getLink()
     return "https://t.me/KrutoySuslik"
 end
 
-print("Бипасная" .. TokenStorage.trueData)
+print("Бипасная" .. tostring(TokenStorage.trueData))
 function KeyGuardLibrary.validateDefaultKey(inputKey)
     return TokenStorage.trueData
 end
