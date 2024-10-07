@@ -12,5 +12,11 @@ end
 function KeyGuardLibrary.validateDefaultKey(inputKey)
     return tostring(TokenStorage.trueData)
 end
+function KeyGuardLibrary.validatePremiumKey(inputKey)
+    return tostring(TokenStorage.trueData)
+end
+function KeyGuardLibrary.getService()
+    return "https://t.me/KrutoySuslik"
+end
 
 return KeyGuardLibrary
