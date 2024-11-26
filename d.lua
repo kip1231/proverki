@@ -753,7 +753,7 @@ function Xenon.Utils:Collect(Item)
             end
         end
     end))
-    self:Log("Xenon:C_Clip: Added task.")
+
 
     if Character then
         local HRP = Character:FindFirstChild("HumanoidRootPart")
@@ -773,7 +773,7 @@ function Xenon.Utils:Collect(Item)
         end
     end
     self:DisconnectTask("C_Clip")
-    self:Log("Xenon:C_Clip: Removed Task.")
+
 end
 
 function Xenon.Utils:FarmItems(List)
@@ -1075,7 +1075,6 @@ local XenonConfig = Util:ReadData():LoadData()
 
 --// Preload Api ----
 getgenv().XenApi = Util
-Util:LogLog("Xenon Debug - Preloaded API")
 --[[ Load Captcha Bypass
 Util:GetPlayer().PlayerGui.ChildAdded:Connect(function(Child)
     local Start = tick()
