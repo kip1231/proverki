@@ -69,7 +69,13 @@ function Xenon.Utils:Beautify(String)
 end
 
 function Xenon.Utils:Log(Text)
-	print("attemp")
+    if self.LogFile == nil then
+        local num = 0
+        repeat num = num + 1 until isfile("/XenonV3/Logs/XenonV3_ScriptLog_" .. num .. ".txt") == false
+        self.LogFile = "/XenonV3/Logs/XenonV3_ScriptLog_" .. num .. ".txt"
+        writefile(self.LogFile, "")
+    end
+    appendfile(self.LogFile, Text .. "\n")
 end
 
 function Xenon.Utils:GetLogPath()
@@ -1067,7 +1073,6 @@ end
 local Util = Xenon.Utils.MakeUtilController()
 local XenonConfig = Util:ReadData():LoadData()
 
-Util:Log("Xenon Debug - Passed Functions")
 --// Preload Api ----
 getgenv().XenApi = Util
 Util:Log("Xenon Debug - Preloaded API")
