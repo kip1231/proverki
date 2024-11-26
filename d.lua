@@ -1075,7 +1075,7 @@ local XenonConfig = Util:ReadData():LoadData()
 
 --// Preload Api ----
 getgenv().XenApi = Util
-Util:Log("Xenon Debug - Preloaded API")
+Util:LogLog("Xenon Debug - Preloaded API")
 --[[ Load Captcha Bypass
 Util:GetPlayer().PlayerGui.ChildAdded:Connect(function(Child)
     local Start = tick()
@@ -1092,7 +1092,6 @@ Util:GetPlayer().PlayerGui.ChildAdded:Connect(function(Child)
     end
 end)--]]
 
---Util:Log("Xenon Debug - Item Captcha Bypassed")
 
 game.Lighting.ChildAdded:Connect(function(Child)
     if Child:IsA("Blur") then
@@ -1100,7 +1099,6 @@ game.Lighting.ChildAdded:Connect(function(Child)
     end
 end)
 
-Util:Log("Xenon Debug - Screen Fix")
 
 --// Preload Hooks ------------------------------------------------------------------------------------------------------------------------------------
 local HookStart = tick()
@@ -1147,7 +1145,6 @@ OldIndex = hookmetamethod(game, "__index", newcclosure(function(self, Key, ...)
     return OldIndex(self, Key, ...)
 end))
 
-Util:Log("Xenon Debug - Passed WS/Jump Hook")
 
 local OldNamecallTP;
 OldNamecallTP = hookmetamethod(game, '__namecall', newcclosure(function(self, ...)
@@ -1165,7 +1162,6 @@ OldNamecallTP = hookmetamethod(game, '__namecall', newcclosure(function(self, ..
     return OldNamecallTP(self, ...)
 end))
 
-Util:Log("Xenon Debug - Passed TP Hook")
 
 
 --[[hookfunction(workspace.Raycast, function() -- noclip bypass
@@ -1193,7 +1189,6 @@ pcall(function()
     end)
 end)
 
-Util:Log("Xenon Debug - Enabled Anti AFK")
 
 --// Rejoin on kick
 
@@ -1209,7 +1204,6 @@ Prompt.ChildAdded:Connect(function(Child)
     end
 end)
 
-Util:Log("Xenon Debug - Enabled Auto-Rejoin on Kick")
 --// Reset fix
 
 Util:ReplaceReset(); --// Incase it doesn't detect characteradded on join
@@ -1217,18 +1211,11 @@ Util:GetPlayer().CharacterAdded:Connect(function()
     Util:ReplaceReset();
 end)
 
-Util:Log("Xenon Debug - Replaced Reset")
 
---// Logs
-Util:Log(("-"):rep(150) .. "\nDo not send this log file to anyone apart from Xenon owners or developers in case of an error/bug in order to keep your account safe!\n[Xenon Log]: Loaded Hooks/Misc functions in: " .. tick()-HookStart .. "s")
-Util:Log("[Xenon Log]: Username: " .. Util:GetPlayer().Name .. " - UserId: " .. Util:GetPlayer().UserId .. " - Log Path: " .. Util:GetLogPath())
-Util:Log("[Xenon Log]: User Config: " .. Util:GetService("HttpService"):JSONEncode(Util:ReadData().Data))
 
-Util:Log("Xenon Debug - Ran Execution Logfile")
---// Skip Loading Screen
 
 if not Util:IsSBR() then
-    Util:Log("Xenon Debug - Loading HUD")
+
 
     if not Util:GetPlayer().PlayerGui:FindFirstChild("HUD") then
         local HUD = game:GetService("ReplicatedStorage").Objects.HUD:Clone()
@@ -1247,8 +1234,7 @@ if not Util:IsSBR() then
         Util:GetPlayer().PlayerGui:FindFirstChild("LoadingScreen"):Destroy()
     end)
 
-    Util:Log("Xenon Debug - Skipped Loading Screen")
-    Util:Log("[Xenon Log]: Skipped Loading Screen")
+
 
     pcall(function()
         workspace.LoadingScreen.Song.Playing = false
@@ -1262,14 +1248,13 @@ if not Util:IsSBR() then
         end
     end)
 
-    Util:Log("Xenon Debug - Passed Loading Screen Checks")
 elseif Util:IsSBR() then
     Util:GetPlayer().PlayerGui.Chat.Frame.ChatChannelParentFrame.Visible = true
     Util:GetPlayer().PlayerGui.Chat.Frame.ChatChannelParentFrame.Position = UDim2.new(0,0,0,-156)
     Util:GetPlayer().PlayerGui.Chat.Frame.Position = UDim2.new(0,0,1,95)
 end
 
-Util:Log("Xenon Debug - Passed SBR Check")
+
 
 --// Load item magnitude hook
 
@@ -1285,24 +1270,23 @@ if Char and Char.PrimaryPart and Util:IsSBR() == false then
     end))
 end
 
-Util:Log("Xenon Debug - Passed Item Hook")
+
 
 --// Queue
 if not Util:IsSBR() and game.PlaceId ~= 5290908008 then
-    Util:Log(("-"):rep(35) .. "ITEM QUEUE" .. ("-"):rep(105))
+
     for i,v in pairs(workspace.Item_Spawns.Items:GetChildren()) do
         Util:AddToQueue(v)
-        Util:Log("[Xenon Queue]: Added " .. v.Name .. " to the item queue")
     end
     
     workspace.Item_Spawns.Items.ChildAdded:Connect(function(Child)
         Util:AddToQueue(Child)
     end)
     
-    Util:Log(("-"):rep(150))
+
 end
 
-Util:Log("Xenon Debug - Added Items to Queue")
+
 -------------------------------------------------------------------------------------------------------------------------------------------------------
 
 Util:AddValues{
@@ -1589,7 +1573,7 @@ pcall(function()
     };
 end)
 
-Util:Log("Xenon Debug - Passed Values")
+
 --// Mod Check (998)
 
 game.Players.PlayerAdded:Connect(function(plr)
@@ -1606,13 +1590,12 @@ task.spawn(function()
     end
 end)
 
-Util:Log("Xenon Debug - Added Mod-Check")
+
 
 if (Util:GetPlayer().PlayerGui:FindFirstChild("LoadingScreen") == nil) and not Util:GetService("CollectionService"):HasTag(Util:GetPlayer(), "PressedPlay") then
     Util:GetCharacter().RemoteEvent:FireServer("PressedPlay")
 end
 
-Util:Log("Xenon Debug - Bypassed Game Mechs")
 
 --// Lib (999)
 local Lib = Library.CreateLib()
@@ -1627,7 +1610,7 @@ end
 local Teleports = Lib:Tab("Teleports", 6035190846)
 local Misc = Lib:Tab("Misc", 6022668951)
 
-Util:Log("Xenon Debug - Created all Tabs")
+
 
 --// Credits (1001 for ctrl + f)
 local Credits_Developers = Credits:Section("Developers")
@@ -1644,10 +1627,7 @@ Credits_Info:Button("Copy Discord", function()
     Library:Notification("Copied", "The discord link was set to your clipboard. Paste it in your browser, discord joins, or any message to be able to join.", 3)
     setclipboard("https://discord.com/invite/DXrGhrxZ9v")
 end, "Copies discord to your clipboard, use CTRL + V in join servers.")
-    
-Util:Log("[Xenon Task]: Loaded Credits Tab")
 
-Util:Log("Xenon Debug - Finished Credits Tab")
 
 --// Player (1002 for ctrl + f) VEZ DONT LIE U FUCKING LOVE THIS U MAKE ALL UR SCRIPTS BASED OFF PLAYER
 local Player_CModifications = Player:Section("Character Modifications")
@@ -2045,7 +2025,7 @@ Player_Combat:Toggle("Player ESP", false, function(State)
     end
 end, "turns on name esp for players")
 
-Util:Log("Xenon Debug - Passed Player Tab Load")
+
 
 --// Autofarm (1006 for ctrl + f)
 if not Util:IsSBR() then -- dont mind this
@@ -2159,7 +2139,7 @@ for i,v in pairs(Util:GetTable("AllItems")) do
     end, ("Adds " .. v .. " to the item farming list."))
 end
 
-Util:Log("Xenon Debug - Passed Item Section")
+
 --// Autofarm (1010 for ctrl + f)
 local Autofarms_StandFarm = Autofarms:Section("Stand Farm Settings")
 local Autofarms_Stands = Autofarms:Section("Stands")
@@ -2368,7 +2348,7 @@ for i,v in pairs(Util:GetTable("AllStands")) do
     end, ("Adds " .. v .. " to the stand farming list."))
 end
 
-Util:Log("Xenon Debug - Passed Stand Farm Section")
+
 --// Autofarm (1020 for ctrl + f)
 local Autofarms_ShinyFarm = Autofarms:Section("Shiny Farm Settings")
 local Autofarms_Shinys = Autofarms:Section("Shinys")
@@ -2600,13 +2580,12 @@ for i,v in pairs(Util:GetTable("AllShinys")) do
         Util:SaveConfig();
     end, ("Adds " .. v .. " to the shiny farming list.")))
 end
-Util:Log("Xenon Debug - Passed Shiny Farm Section")
+
 
 --// Quest farm (1021 for ctrl + f)
 local Autofarms_QuestFarm = Autofarms:Section("Quest Farm")
 
---// Gotta parse the quests
-Util:Log("Xenon Debug - Parsing Quests")
+
 while true do
     local Children = #workspace.Dialogues:GetChildren()
     if Children >= 56 then
@@ -2624,7 +2603,7 @@ for i,v in pairs(workspace.Dialogues:GetChildren()) do
         end
     end
 end
-Util:Log("Xenon Debug - Parsed Quests")
+
 
 local CurrentQuest = Autofarms_QuestFarm:Label("Quest Selected:", Util:GetString("Quest"))
 
@@ -2659,7 +2638,7 @@ Util:SetState("Auto Choose Quest", State)
     end
 end, "Automatically chooses the best quest for you")
 
-Util:Log("Xenon Debug - Passed Auto Choose Quests")
+
 Autofarms_QuestFarm:Toggle("Quest Farm", false, function(State)
     Util:SetState("Quest Farm", State)
 
@@ -2711,7 +2690,6 @@ Autofarms_QuestFarm:Toggle("Quest Farm", false, function(State)
     end
 end, "Toggles quest farming")
 
-Util:Log("Xenon Debug - Passed Quest Section")
 --// Quest farm (1022 for ctrl + f)
 local Autofarms_NpcFarm = Autofarms:Section("NPC Farm")
 
@@ -2725,7 +2703,6 @@ for i,v in pairs(workspace.Living:GetChildren()) do
     if v:FindFirstChild("Spawn") and Util:FindTable("AllNPCs", v.Name) == nil then
         Util:InsertTable("AllNPCs", v.Name)
         TP_C:UpdateAsset(Util:GetTable("AllNPCs"))
-        Util:Log("Xenon:3040: Added NPC to table (" .. v.Name .. ")")
     elseif v:FindFirstChild("Spawn") and Util:FindTable("AllNPCs", v.Name) ~= nil then
         --Util:Log("Xenon:3042: (Above ID 1023) - Attempt to add NPC that already exists in table")
     end
@@ -2735,12 +2712,11 @@ workspace.Living.ChildAdded:Connect(function(child)
     if child:FindFirstChild("Spawn") and Util:FindTable("AllNPCs", child.Name) == nil then
         Util:InsertTable("AllNPCs", child.Name)
         TP_C:UpdateAsset(Util:GetTable("AllNPCs"))
-        Util:Log("Xenon:3051: Added NPC to table (" .. child.Name .. ")")
     elseif child:FindFirstChild("Spawn") and Util:FindTable("AllNPCs", child.Name) ~= nil then
         --Util:Log("Xenon:3053: (Above ID 1023) - Attempt to add NPC that already exists in table")
     end
 end)
-Util:Log("Xenon Debug - Added NPCs to Table")
+
 
 Autofarms_NpcFarm:Toggle("Farm NPCs", false, function(State)
     Util:SetState("NPC Farm", State)
@@ -2762,7 +2738,7 @@ Autofarms_NpcFarm:Toggle("Farm NPCs", false, function(State)
 end)
 
 end -- dont mind this
-Util:Log("Xenon Debug - Passed Quest Farm Section")
+
 --// Stand Info (1023 for ctrl + f)
 -- dont mind this vvvvv 
 if not Util:IsSBR() then
@@ -2788,7 +2764,7 @@ if not Util:IsSBR() then
         end
     end)
 end -- dont mind this
-Util:Log("Xenon Debug - Passed Stand Info Section")
+
 --// Teleports (1030 for ctrl + f)
 local Teleports_Players = Teleports:Section("Teleports (Players)")
 local Teleports_NPCs;
@@ -2798,7 +2774,7 @@ if not Util:IsSBR() then
     Teleports_Places = Teleports:Section("Teleports (Places)")
 end
 
-Util:Log("Xenon Debug - Created Teleports Sections")
+
 
 --// Player Teleports
 local TP_A;
@@ -2823,7 +2799,6 @@ Util:GetService("Players").ChildRemoved:Connect(function(child)
     TP_A:UpdateAsset(Util:GetTable("AllPlayers"))
 end)
 
-Util:Log("Xenon Debug - Added Players to Table")
 
 Teleports_Players:Button("Teleport to Player", function()
     Util:GetHRP().CFrame = Util:GetService("Players"):FindFirstChild(Util:GetString("Chosen Player")).Character.PrimaryPart.CFrame
@@ -2841,9 +2816,9 @@ for i,v in pairs(workspace.Living:GetChildren()) do
     if v:FindFirstChild("Spawn") and Util:FindTable("AllNPCs", v.Name) == nil then
         Util:InsertTable("AllNPCs", v.Name)
         TP_B:UpdateAsset(Util:GetTable("AllNPCs"))
-        Util:Log("Xenon:3040: Added NPC to table (" .. v.Name .. ")")
+
     elseif v:FindFirstChild("Spawn") and Util:FindTable("AllNPCs", v.Name) ~= nil then
-        Util:Log("Xenon:3042: (Above ID 1023) - Attempt to add NPC that already exists in table")
+
     end
 end
 
@@ -2851,12 +2826,11 @@ workspace.Living.ChildAdded:Connect(function(child)
     if child:FindFirstChild("Spawn") and Util:FindTable("AllNPCs", child.Name) == nil then
         Util:InsertTable("AllNPCs", child.Name)
         TP_B:UpdateAsset(Util:GetTable("AllNPCs"))
-        Util:Log("Xenon:3051: Added NPC to table (" .. child.Name .. ")")
     elseif child:FindFirstChild("Spawn") and Util:FindTable("AllNPCs", child.Name) ~= nil then
-        Util:Log("Xenon:3053: (Above ID 1023) - Attempt to add NPC that already exists in table")
+
     end
 end)
-Util:Log("Xenon Debug - Added NPCs to Table")
+
 Teleports_NPCs:Button("Teleport to NPC", function()
     local NPC = workspace.Living:FindFirstChild(Util:GetString("Chosen NPC"))
     if NPC then
@@ -2872,7 +2846,7 @@ for place, cframe in pairs(Util:GetTable("AllTeleports")) do
 end
 
 end -- dont mind this
-Util:Log("Xenon Debug - Added Teleports from Table")
+
         
 --// Misc Tab (1041 for ctrl +f)
 local Misc_SBRSettings;
@@ -2903,7 +2877,6 @@ local Misc_Animations = Misc:Section("Animations")
 
 local WaypointStatus = Misc_Waypoints:Label("Waypoint: None")
 
-Util:Log("Xenon Debug - Created Misc Sections")
 
 Misc_Webhooks:Toggle("Disable Xenon Logs", Util:GetState("Disable Xenon Logs"), function(State)
     Util:SetState("Disable Xenon Logs", State)
@@ -2956,7 +2929,7 @@ end, "Choose player to use troll features on.")
 
 game.Players.PlayerAdded:Connect(function() Misc_Trolling:UpdateAsset(Util:GetTable("AllPlayers")) end)
 game.Players.PlayerRemoving:Connect(function() Misc_Trolling:UpdateAsset(Util:GetTable("AllPlayers")) end)
-Util:Log("Xenon Debug - Passed Misc Trolling Asset Update")
+
 Misc_Trolling:Label("Stand Trolling")
 
 if Util:IsSBR() then
@@ -3429,7 +3402,7 @@ for KeybindName, Data in pairs(Util:GetTable("Keybinds")) do
     Data.Function()
     end, "A changeable keybind")
 end
-Util:Log("Xenon Debug - Passed Keybind Section")
+
 if Util:IsSBR() then
     Misc_SBRSettings:Toggle("Player ESP", false, function(State)
         if State == true then
@@ -3603,11 +3576,11 @@ if Util:IsSBR() then
         end
     end, "teleports your horse to you")
 end
-Util:Log("Xenon Debug - Passing Pressed Play Check")
+
 if not Util:IsSBR() then
     Util:GetCharacter():WaitForChild("RemoteEvent"):FireServer("PressedPlay")  
 end
-Util:Log("Xenon Debug - Passed Press Play Check")
+
 -- animations add to table
 for i,v in pairs(game.ReplicatedStorage.Anims:GetDescendants()) do
     if v:IsA("Animation") and not Util:FindTable("AnimsBlacklist", v.Name) and v.Parent.Name ~= "Poses" then
@@ -3620,13 +3593,13 @@ for i,v in pairs(game.ReplicatedStorage.Anims.Poses:GetChildren()) do
         Util:InsertTable("Poses", v.Name)
     end
 end
-Util:Log("Xenon Debug - Added Anims to Table")
+
 local DontTouch = Instance.new("Part", workspace)
 DontTouch.Transparency = 1
 DontTouch.Anchored = true
 DontTouch.CanCollide = false
 DontTouch.Name = "AnticheatBypass"
-Util:Log("Xenon Debug - Passed ACB")
+
 local CurrentAnim = Misc_Animations:Label("Current animation: " .. "None")
 
 Misc_Animations:TextBox("Search animation", function(Text)
@@ -3688,7 +3661,6 @@ end, "Stop playing animations")
 pcall(function()
     Util:GetPlayer().PlayerGui.Chat.Frame.Visible = true
 end)
-Util:Log("Xenon Debug - Attempted to fix chat")
 
 game:GetService("CoreGui").XenonV3Lib.TabHolder.Status.Label.Text = "Status: Loaded!"
 
