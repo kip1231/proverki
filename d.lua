@@ -1071,10 +1071,11 @@ function Xenon.Utils:LabelChar(Chars)
 end
 
 local Util = Xenon.Utils.MakeUtilController()
+local XenonConfig = Util:ReadData():LoadData()
 
 --// Preload Api ----
 getgenv().XenApi = Util
---[[ Load Captcha   
+--[[ Load Captcha Bypass
 Util:GetPlayer().PlayerGui.ChildAdded:Connect(function(Child)
     local Start = tick()
     if Child.Name == "ScreenGui" then
